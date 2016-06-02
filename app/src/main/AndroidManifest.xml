@@ -16,9 +16,9 @@
             </intent-filter>
         </activity>
         <provider
-            android:authorities="info.krushik.android.myapplication10"
             android:name=".StudentsProvider"
-            android:exported="true" />
+            android:authorities="info.krushik.android.myapplication10"
+            android:exported="true"/>
     </application>
 
 </manifest>
