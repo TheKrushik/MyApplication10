@@ -51,7 +51,7 @@ public class StudentsProvider extends ContentProvider {
     //Обработка запроса на чтение
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
+    public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {// метод query возвращает cursor
         db = mOpenHelper.getWritableDatabase();
         Cursor cursor = null;
 
@@ -71,7 +71,7 @@ public class StudentsProvider extends ContentProvider {
     //Обработка запроса на вставку
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
+    public Uri insert(Uri uri, ContentValues contentValues) {//метод insert возвращает не id, а Uri
         db = mOpenHelper.getWritableDatabase();
         long id = 0;
 
