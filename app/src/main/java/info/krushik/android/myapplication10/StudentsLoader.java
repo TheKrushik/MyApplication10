@@ -6,44 +6,46 @@ import android.support.v4.content.AsyncTaskLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+//AsyncTaskLoader - работа в фоновом потоке, отличие от AsyncTask: возвращает результат не обращаясь повторно в БД
 class StudentsLoader extends AsyncTaskLoader<List<Student>> {
 
     private Context mContext;
     private List<Student> Students;
 
+    //Конструктор
     public StudentsLoader(Context context) {
         super(context);
 
         this.mContext = context;
     }
 
+    //Работа в фоновом потоке
     @Override
     public List<Student> loadInBackground() {
-        Students = new ArrayList<Student>();
+        DataBaseHelper helper = new DataBaseHelper(mContext);//создаем helper
 
-        Students.add(new Student());
-        Students.add(new Student());
-
-        return Students;
+        return helper.getStudents();//вызываем метод все студенты
     }
 
+    //Возврат результата
     @Override
     public void deliverResult(List<Student> data) {
-        if (isReset()) {
+        if (isReset()) {//проверка зарезечен
             return;
         }
 
         Students = data;
 
-        if (isStarted()) {
+        if (isStarted()) {//проверка застартован
             super.deliverResult(data);
         }
     }
 
+    //Старт
     @Override
     protected void onStartLoading() {
-        if (Students != null) {
-            deliverResult(Students);
+        if (Students != null) {//если студенты не пустые
+            deliverResult(Students);//он их возвращает
         }
 
         if (takeContentChanged() || Students == null) {
@@ -51,18 +53,19 @@ class StudentsLoader extends AsyncTaskLoader<List<Student>> {
         }
     }
 
+    //Стоп
     @Override
     protected void onStopLoading() {
-        cancelLoad();
+        cancelLoad();//останавливает работу
     }
 
+    //Перезагрузка
     @Override
     protected void onReset() {
         onStopLoading();
 
         if (Students != null) {
-            Students = null;
+            Students = null;//очищает массив студентов
         }
     }
 }
-

@@ -47,23 +47,50 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public ArrayList<Student> getStudents(long id){//чтение студента
+    public ArrayList<Student> getStudents(){//чтение студентов
         SQLiteDatabase db = getWritableDatabase();
-        ArrayList<Student> students = null;
+        ArrayList<Student> students = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(Student.TABLE_NAME, null, null, null, null, null, null);//ищем студентов
+            if (cursor.moveToFirst()) {//проверяем что что-то нашло, перемещает курсор на первую строку в результате запроса;
+                while (!cursor.isAfterLast()) {//не конец запроса?
+                    Student student = new Student();// заполняем студента
+
+                    student.id = cursor.getLong(cursor.getColumnIndex(Student.COLUMN_ID));
+                    student.FirstName = cursor.getString(cursor.getColumnIndex(Student.COLUMN_FIRST_NAME));
+                    student.LastName = cursor.getString(cursor.getColumnIndex(Student.COLUMN_LAST_NAME));
+                    student.Age = cursor.getLong(cursor.getColumnIndex(Student.COLUMN_AGE));
+
+                    students.add(student);
+                    cursor.moveToNext();//перемещает курсор на следующую строку;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if (cursor != null) {
+                cursor.close();//обязательно следует закрывать для освобождения памяти
+            }
+        }
+        return  students;
+    }
+
+    public Student getStudent(long id){//чтение студента
+        SQLiteDatabase db = getWritableDatabase();
+        Student student = null;
         Cursor cursor = null;
 
         try {
             cursor = db.query(Student.TABLE_NAME, null, Student.COLUMN_ID + "=" + id, null, null, null, null);//ищем указанного студента
             if (cursor.moveToFirst()) {//проверяем что что-то нашло
-                Student student = new Student();// заполняем студента
+                student = new Student();// заполняем студента
 
                 student.id = cursor.getLong(cursor.getColumnIndex(Student.COLUMN_ID));
                 student.FirstName = cursor.getString(cursor.getColumnIndex(Student.COLUMN_FIRST_NAME));
                 student.LastName = cursor.getString(cursor.getColumnIndex(Student.COLUMN_LAST_NAME));
                 student.Age = cursor.getLong(cursor.getColumnIndex(Student.COLUMN_AGE));
-
-                students.add(student);
-                cursor.moveToNext();
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -72,6 +99,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 cursor.close();
             }
         }
-        return  students;
+        return  student;
     }
 }
